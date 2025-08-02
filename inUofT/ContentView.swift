@@ -7,33 +7,66 @@
 
 import SwiftUI
 import RealityKit
+import ARKit
+import CoreLocation
 
-struct ContentView : View {
+struct ContentView: View {
+    @StateObject private var headingProvider = HeadingProvider()
+    @State private var currentPosition: SIMD3<Float> = .zero
+    @State private var lastSavedPosition: SIMD3<Float>? = nil
+    @State private var relativeOffset: SIMD3<Float>? = nil
+
+    @State private var waypoints: [Waypoint] = []
+    @State private var waypointCounter: Int = 0
+    
+    @State private var isScanningText = false
+    private var ocrScanner = OCRScanner()
 
     var body: some View {
-        RealityView { content in
+        ZStack(alignment: .topLeading) {
+            ARViewContainer(
+                headingProvider: headingProvider,
+                onPositionUpdate: { currentPosition = $0 },
+                ocrScanner: ocrScanner
+            )
+            .edgesIgnoringSafeArea(.all)
 
-            // Create a cube model
-            let model = Entity()
-            let mesh = MeshResource.generateBox(size: 0.1, cornerRadius: 0.005)
-            let material = SimpleMaterial(color: .gray, roughness: 0.15, isMetallic: true)
-            model.components.set(ModelComponent(mesh: mesh, materials: [material]))
-            model.position = [0, 0.05, 0]
+            PrevWaypointInfoView(
+                currentPosition: currentPosition,
+                relativeOffset: relativeOffset,
+                onRecord: {
+                    var offset: SIMD3<Float>? = nil
+                    if let last = lastSavedPosition {
+                        offset = currentPosition - last
+                        relativeOffset = offset
+                    }
 
-            // Create horizontal plane anchor for the content
-            let anchor = AnchorEntity(.plane(.horizontal, classification: .any, minimumBounds: SIMD2<Float>(0.2, 0.2)))
-            anchor.addChild(model)
+                    let waypoint = Waypoint(
+                        id: waypointCounter,
+                        previousId: waypoints.last?.id,
+                        positionRelativeToLast: Vector3(offset ?? .zero),
+                        texts: ocrScanner.flushTexts()
+                    )
 
-            // Add the horizontal plane anchor to the scene
-            content.add(anchor)
-
-            content.camera = .spatialTracking
-
+                    waypoints.append(waypoint)
+                    waypointCounter += 1
+                    lastSavedPosition = currentPosition
+                    ocrScanner.stopScanning()
+                },
+                onScan: {
+                    isScanningText = true
+                    ocrScanner.startScanning()
+                },
+                onExport: {
+                    exportWaypointsToJSON(waypoints)
+                }
+            )
         }
-        .edgesIgnoringSafeArea(.all)
     }
 
 }
+
+
 
 #Preview {
     ContentView()
