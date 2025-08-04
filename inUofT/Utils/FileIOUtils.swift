@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 struct Vector3: Codable {
     var x: Float
@@ -23,7 +24,7 @@ struct Vector3: Codable {
     }
 }
 
-func exportWaypointsToJSON(_ waypoints: [Waypoint]) {
+func exportWaypointsToJSON(_ waypoints: [Waypoint]) -> URL? {
     let encoder = JSONEncoder()
     encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
 
@@ -35,7 +36,22 @@ func exportWaypointsToJSON(_ waypoints: [Waypoint]) {
 
         try data.write(to: url)
         print("✅ Waypoints exported to: \(url.path)")
+        return url
     } catch {
         print("❌ Export failed: \(error)")
+        return nil
     }
 }
+
+struct ShareSheet: UIViewControllerRepresentable {
+    let activityItems: [Any]
+
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        return UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+    }
+
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {
+        // nothing to update
+    }
+}
+

@@ -11,7 +11,7 @@ import Combine
 
 class HeadingProvider: NSObject, ObservableObject, CLLocationManagerDelegate {
     private let locationManager = CLLocationManager()
-    @Published var currentHeading: CLLocationDirection?
+    var currentHeading: CLLocationDirection?
 
     override init() {
         super.init()
@@ -23,5 +23,9 @@ class HeadingProvider: NSObject, ObservableObject, CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
         currentHeading = newHeading.trueHeading > 0 ? newHeading.trueHeading : newHeading.magneticHeading
+    }
+    
+    func getCurrentHeading() -> CLLocationDirection?{
+        return currentHeading
     }
 }

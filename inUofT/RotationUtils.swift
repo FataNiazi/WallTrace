@@ -21,7 +21,7 @@ func rotateToNorthYAxis(position: SIMD3<Float>, headingDegrees: CLLocationDirect
     // Rotate horizontal plane so +Y points north
     let rotationMatrix = float3x3([
         SIMD3(cos(headingRadians), -sin(headingRadians), 0), // X'
-        SIMD3(sin(headingRadians),  cos(headingRadians), 0), // Y' (north)
+        SIMD3(-sin(headingRadians),  -cos(headingRadians), 0), // Y' (north)
         SIMD3(0,                    0,                   1)  // Z' (elevation)
     ])
 

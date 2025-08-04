@@ -12,30 +12,10 @@ import CoreML
 
 
 struct PrevWaypointInfoView: View {
-    
-    let currentPosition: SIMD3<Float>
     let relativeOffset: SIMD3<Float>?
-
-    let onRecord: () -> Void
-    let onScan: () -> Void
-    let onExport: () -> Void
 
     var body: some View {
         VStack(alignment: .center, spacing: 12) {
-            Text("Current (North-aligned):")
-                .multilineTextAlignment(.center)
-            
-            ZStack{
-                // To avoid wiggling when there is a - sign
-                Text("x: +000.00, y: 000.00, z: 000.00")
-                    .monospaced()
-                    .opacity(0)
-                
-                
-                Text(String(format: "x: %.2f, y: %.2f, z: %.2f", currentPosition.x, currentPosition.y, currentPosition.z))
-                    .monospaced()
-                    .foregroundColor(.white)
-            }
 
             if let offset = relativeOffset {
                 Text("Δ from last:")
@@ -50,14 +30,6 @@ struct PrevWaypointInfoView: View {
                         .foregroundColor(.green)
                 }
             }
-
-            Button("Record & Reset Waypoint", action: onRecord)
-                .styledButton(background: .blue)
-
-            Button("Start Scan", action: onScan)
-
-            Button("Export Waypoints to JSON", action: onExport)
-                .styledButton(background: .green)
         }
         .padding()
         .background(Color.black.opacity(0.5))
