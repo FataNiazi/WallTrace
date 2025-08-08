@@ -26,7 +26,6 @@ def trained_random_forest(X_train, Y_train, criterion, max_depth, n_estimators):
     return clf
 
 
-
 def entropy(counts):
     total = np.sum(counts)
     if total == 0:

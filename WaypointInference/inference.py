@@ -15,7 +15,9 @@ def knn_multiple_strings(Knn: KNeighborsClassifier, string_embeddings):
     return most_common(preds)
 
 
-def random_forest_multiple_strings(random_forest: RandomForestClassifier, string_embeddings):
+def random_forest_multiple_strings(
+    random_forest: RandomForestClassifier, string_embeddings
+):
     preds = random_forest.predict(string_embeddings)
     return most_common(preds)
 
