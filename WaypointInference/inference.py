@@ -44,5 +44,5 @@ if __name__ == "__main__":
     strings = get_embeddings(strings)
     print(strings.shape)
 
-    pred = inference_multiple_strings(Knn, strings)
+    pred = knn_multiple_strings(Knn, strings)
     print("Prediction: ", pred)
