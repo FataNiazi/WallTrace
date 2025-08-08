@@ -216,3 +216,8 @@ __marimo__/
 # Waypoint Inference
 WaypointInference/__pycache__/
 WaypointInference/data/__pycache__/
+
+# Models
+RoomIdentifier/room_classifier.pt
+WaypointInference/models/knn_model.joblib
+WaypointInference/models/random_forest.joblib

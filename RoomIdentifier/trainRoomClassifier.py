@@ -6,7 +6,7 @@ from torch.optim import AdamW
 from sklearn.model_selection import train_test_split
 import random
 
-with open('roomLabels.txt', 'r') as f:
+with open('RoomIdentifier/roomLabels.txt', 'r') as f:
     room_labels = set(line.strip().upper() for line in f if line.strip())
 
 non_room_samples = [
@@ -157,22 +157,26 @@ non_room_samples = [
     "KK115-130",
 ]
 
-data = []
+tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+device = torch.device('cuda')
 
-for room in room_labels:
-    data.append((room, 1))
+def predict(text, model):
+    encoding = tokenizer(
+        text,
+        truncation=True,
+        max_length=16,
+        padding='max_length',
+        return_tensors='pt'
+    )
+    input_ids = encoding['input_ids'].to(device)
+    attention_mask = encoding['attention_mask'].to(device)
 
-for neg in non_room_samples:
-    data.append((neg.upper(), 0))
-
-random.shuffle(data)
-
-train_val, test = train_test_split(data, test_size=0.4, random_state=42)
-train, val = train_test_split(train_val, test_size=0.5, random_state=42)
-
-print(
-    f"Train samples: {len(train)}, Val samples: {len(val)}, Test samples: {len(test)}")
-
+    with torch.no_grad():
+        output = model(input_ids, attention_mask)
+        probability = output.item()
+        label = 1 if probability > 0.5 else 0
+        return label, probability
+    
 
 class RoomDataset(Dataset):
     def __init__(self, data, tokenizer, max_len=16):
@@ -216,21 +220,6 @@ class RoomClassifier(nn.Module):
         return self.classifier(pooled_output).squeeze(-1)
 
 
-tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-train_dataset = RoomDataset(train, tokenizer)
-val_dataset = RoomDataset(val, tokenizer)
-test_dataset = RoomDataset(test, tokenizer)
-
-train_loader = DataLoader(train_dataset, batch_size=8, shuffle=True)
-val_loader = DataLoader(val_dataset, batch_size=8)
-test_loader = DataLoader(test_dataset, batch_size=8)
-
-device = torch.device('cpu')
-model = RoomClassifier().to(device)
-criterion = nn.BCELoss()
-optimizer = AdamW(model.parameters(), lr=2e-5)
-
-
 def train_epoch():
     model.train()
     total_loss = 0
@@ -267,15 +256,45 @@ def eval_epoch(loader):
     return total_loss / len(loader), correct / total
 
 
-EPOCHS = 5
-for epoch in range(EPOCHS):
-    train_loss = train_epoch()
-    val_loss, val_acc = eval_epoch(val_loader)
-    print(
-        f"Epoch {epoch + 1}/{EPOCHS} | Train Loss: {train_loss:.4f} | Val Loss: {val_loss:.4f} | Val Acc: {val_acc:.4f}")
+if __name__ == "__main__":
+    data = []
 
-test_loss, test_acc = eval_epoch(test_loader)
-print(f"Test Loss: {test_loss:.4f} | Test Acc: {test_acc:.4f}")
+    for room in room_labels:
+        data.append((room, 1))
 
-torch.save(model.state_dict(), 'room_classifier.pt')
-tokenizer.save_pretrained('tokenizer/')
+    for neg in non_room_samples:
+        data.append((neg.upper(), 0))
+
+    random.shuffle(data)
+
+    train_val, test = train_test_split(data, test_size=0.4, random_state=42)
+    train, val = train_test_split(train_val, test_size=0.5, random_state=42)
+
+    print(f"Train samples: {len(train)}, Val samples: {len(val)}, Test samples: {len(test)}")
+
+    train_dataset = RoomDataset(train, tokenizer)
+    val_dataset = RoomDataset(val, tokenizer)
+    test_dataset = RoomDataset(test, tokenizer)
+
+    train_loader = DataLoader(train_dataset, batch_size=8, shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size=8)
+    test_loader = DataLoader(test_dataset, batch_size=8)
+
+    model = RoomClassifier().to(device)
+    criterion = nn.BCELoss()
+    optimizer = AdamW(model.parameters(), lr=2e-5)
+
+
+    EPOCHS = 5
+    for epoch in range(EPOCHS):
+        train_loss = train_epoch()
+        val_loss, val_acc = eval_epoch(val_loader)
+        print(
+            f"Epoch {epoch + 1}/{EPOCHS} | Train Loss: {train_loss:.4f} | Val Loss: {val_loss:.4f} | Val Acc: {val_acc:.4f}")
+
+    test_loss, test_acc = eval_epoch(test_loader)
+    print(f"Test Loss: {test_loss:.4f} | Test Acc: {test_acc:.4f}")
+
+
+    torch.save(model.state_dict(), 'room_classifier.pt')
+    tokenizer.save_pretrained('tokenizer/')

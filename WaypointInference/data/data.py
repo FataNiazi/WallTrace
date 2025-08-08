@@ -4,7 +4,6 @@ import json
 
 M = 384
 
-
 def load_data(path: str):
     with open(path) as data:
         data = json.load(data)
