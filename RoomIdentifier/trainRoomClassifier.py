@@ -6,9 +6,6 @@ from torch.optim import AdamW
 from sklearn.model_selection import train_test_split
 import random
 
-with open('RoomIdentifier/roomLabels.txt', 'r') as f:
-    room_labels = set(line.strip().upper() for line in f if line.strip())
-
 non_room_samples = [
     "Janitors Closet", "Main Entrance", "Library", "Elevator", "Office",
     "Hallway",
@@ -258,6 +255,9 @@ def eval_epoch(loader):
 
 if __name__ == "__main__":
     data = []
+    
+    with open('roomLabels.txt', 'r') as f:
+        room_labels = set(line.strip().upper() for line in f if line.strip())
 
     for room in room_labels:
         data.append((room, 1))
