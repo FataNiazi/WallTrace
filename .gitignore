@@ -214,6 +214,5 @@ __marimo__/
 *.sty
 
 # Waypoint Inference
-WaypointInference/.venv
-WaypointInference/__pycache__
-WaypointInference/data/__pycache__
+WaypointInference/__pycache__/
+WaypointInference/data/__pycache__/
