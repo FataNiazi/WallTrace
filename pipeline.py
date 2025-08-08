@@ -7,7 +7,7 @@ import time
 
 
 ### Make sure to generate the models before running 
-### Run RoomIdentifier/trainRoomClassifier.py and WaypointInference/generate_models.py
+### cd RoomIdentiifer, run trainRoomClassifier.py then cd WaypointInference, run generate_models.py
 
 
 ROOM_CLASSIFIER_PATH = "RoomIdentifier/room_classifier.pt"
