@@ -5,6 +5,16 @@ from sklearn.metrics import accuracy_score
 
 
 def random_forest(X_train, X_val, Y_train, Y_val, criterion, max_depth, n_estimators):
+    clf = trained_random_forest(X_train, Y_train, criterion, max_depth, n_estimators)
+    Y_pred = clf.predict(X_val)
+    accuracy = accuracy_score(Y_val, Y_pred)
+    print(
+        f"Criterion: {criterion}\tTrees: {n_estimators}\tMax Depth: {max_depth}\tAccuracy: {accuracy:.4f}"
+    )
+    return accuracy
+
+
+def trained_random_forest(X_train, Y_train, criterion, max_depth, n_estimators):
     clf = RandomForestClassifier(
         criterion=criterion,
         max_depth=max_depth,
@@ -13,12 +23,8 @@ def random_forest(X_train, X_val, Y_train, Y_val, criterion, max_depth, n_estima
         n_jobs=-1,
     )
     clf.fit(X_train, Y_train)
-    Y_pred = clf.predict(X_val)
-    accuracy = accuracy_score(Y_val, Y_pred)
-    print(
-        f"Criterion: {criterion}\tTrees: {n_estimators}\tMax Depth: {max_depth}\tAccuracy: {accuracy:.4f}"
-    )
-    return accuracy
+    return clf
+
 
 
 def entropy(counts):

@@ -79,5 +79,4 @@ def test_random_forests():
 
 
 if __name__ == "__main__":
-    test_knn()
     test_random_forests()
