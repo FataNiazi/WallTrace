@@ -1,6 +1,8 @@
 import Foundation
 import SwiftUI
 
+/// The util struct used for saving the json file (a graph)
+///
 struct Vector3: Codable {
     var x: Float
     var y: Float
@@ -44,7 +46,7 @@ struct ShareSheet: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {
-        // nothing to update
+        // pass, nothing to update
     }
 }
 

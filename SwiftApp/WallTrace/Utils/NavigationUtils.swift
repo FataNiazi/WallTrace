@@ -1,6 +1,7 @@
 import Foundation
 import simd
 
+/// The struct for Naviagation utils, used mainly in NavigationManager.
 struct Navigation {
     /// Returns the shortest path (as list of waypoint IDs) from start to destination using BFS
     static func findPath(

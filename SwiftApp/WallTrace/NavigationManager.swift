@@ -1,6 +1,8 @@
 import Foundation
 import simd
 
+/// This class is used to handle user navigation and the logic related to the sequence of waypoints
+///
 class NavigationManager: ObservableObject {
     @Published var path: [UUID] = []
     @Published var currentIndex: Int = 0
@@ -71,10 +73,8 @@ class NavigationManager: ObservableObject {
     func updateCurrentPosition(_ positionENU: SIMD3<Float>) {
         currentPosition = positionENU
 
-        // use planar math (assuming you already added planar(...))
         let relBefore = currentPosition - lastVirtualPosition
 
-        // This might advance currentIndex / lastVirtualPosition:
         updatePosition(relativeOffset: relBefore)
 
         // Recompute relative after any advancement
@@ -83,7 +83,7 @@ class NavigationManager: ObservableObject {
         if let current = currentWaypoint,
            let next = nextWaypoint,
            let expected = current.neighbors[next.id] {
-            remainingOffset = planar(expected - relAfter)   // publish AFTER advancement
+            remainingOffset = planar(expected - relAfter)   // publish advancement
         } else {
             remainingOffset = nil
         }

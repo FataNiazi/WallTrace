@@ -3,6 +3,7 @@ import CoreGraphics
 import Vision
 import UIKit
 
+/// Utilites relevant to the OCRScanner used for text extraction from the environment.
 final class OCRScanner {
     private(set) var recognizedTexts: Set<String> = []
     var isScanning: Bool = false

@@ -1,9 +1,4 @@
-//
-//  ControlView.swift
-//  inUofT
-//
-//  Created by Fata Niazi on 2025-08-02.
-//
+
 import SwiftUI
 import simd
 
@@ -14,7 +9,7 @@ struct WaypointSummary: Identifiable, Hashable {
 }
 
 struct ControlView: View {
-    // MARK: – Inputs
+    
     let isScanning: Bool
     let scanAction: () -> Void
     let saveWaypointAction: () -> Void
@@ -26,19 +21,17 @@ struct ControlView: View {
     /// *Single* source‑of‑truth for whatever waypoint should be considered "last".
     @Binding var lastWaypointId: UUID?
 
-    // MARK: – Local UI state
     @State private var showWaypointPicker = false
 
     var body: some View {
         ZStack {
-            // Scan / Save buttons in the middle
             PillButtons(showScanButton: !isScanning,
                         scanAction: scanAction,
                         saveWaypointAction: saveWaypointAction)
                 .padding(.vertical, 10)
 
             HStack {
-                // ↺  Reset button
+                // Reset button
                 Button(action: resetRelativePosAction) {
                     Image(systemName: "graph.3d")
                         .imageScale(.large)
@@ -64,8 +57,6 @@ struct ControlView: View {
         .safeAreaPadding(.bottom, 50)
     }
 }
-
-// MARK: – Sub‑views
 
 /// Two‑button strip that animates between Scan+Save and single Save.
 private struct PillButtons: View {

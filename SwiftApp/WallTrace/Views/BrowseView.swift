@@ -1,10 +1,3 @@
-//
-//  BrowseView.swift
-//  inUofT
-//
-//  Created by Fata Niazi on 2025-07-31.
-//
-
 import SwiftUI
 
 struct BrowseView: View{

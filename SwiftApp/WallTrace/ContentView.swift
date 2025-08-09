@@ -3,6 +3,10 @@ import RealityKit
 import ARKit
 import CoreLocation
 
+/// The main View of WallTrace. Has two modes:
+///     - Data Collection
+///     - Explore (for inference)
+///     
 struct ContentView: View {
     enum AppMode {
         case dataCollection

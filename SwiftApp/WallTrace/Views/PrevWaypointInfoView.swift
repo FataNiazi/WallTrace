@@ -1,16 +1,11 @@
-//
-//  PrevWaypointInfoView.swift
-//  inUofT
-//
-//  Created by Fata Niazi on 2025-08-02.
-//
-
 import Foundation
 import SwiftUI
 import SwiftUICore
 import CoreML
 
 
+/// The View for the window that shows the coordinates changes since the last Waypoint
+/// 
 struct PrevWaypointInfoView: View {
     let relativeOffset: SIMD3<Float>?
 

@@ -3,6 +3,8 @@ import RealityKit
 import ARKit
 import Combine
 
+/// The View that will hold the AR related fields and attributes
+/// 
 struct ARViewContainer: UIViewRepresentable {
     typealias UIViewType = ARView
 
@@ -12,7 +14,6 @@ struct ARViewContainer: UIViewRepresentable {
     @ObservedObject var arrowController: ArrowController
     @ObservedObject var navigationManager: NavigationManager
 
-    // MARK: - Coordinator
     func makeCoordinator() -> Coordinator { Coordinator(parent: self) }
 
     final class Coordinator {

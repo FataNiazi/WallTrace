@@ -1,12 +1,7 @@
-//
-//  Inference.swift
-//  inUofT
-//
-//  Created by Fata Niazi on 2025-08-04.
-//
 
 import SwiftUI
 
+/// The View responsible for the users to explore and navigate
 struct InferenceView: View{
     @StateObject private var arrowController = ArrowController()
     let headingProvider: HeadingProvider
@@ -62,7 +57,7 @@ struct InferenceView: View{
         .onReceive(navigationManager.$remainingOffset) { offset in
             if let d = offset {
                 // Only show ENU x,y
-                output = String(format: "📉 Remaining (E,N): (%.2f, %.2f)", d.x, d.y)
+                output = String(format: "Remaining (E,N): (%.2f, %.2f)", d.x, d.y)
             } else if !navigationManager.path.isEmpty {
                 output = "🎉 You've reached the destination!"
             } else {
@@ -81,7 +76,6 @@ struct InferenceView: View{
 
                         navigationManager.startPath(path, waypoints: waypoints)
                         destWaypointId = selectedId
-                        // No need to set `output` here — onReceive will handle it
 
                     } else {
                         output = "❌ Could not determine current location."

@@ -1,5 +1,7 @@
 import SwiftUI
 
+/// The View for the Menu to select between DataCollection and Explore mode.
+/// 
 struct MoreMenuButton: View {
     let onExport: () -> Void
     let onResetWaypoints: () -> Void

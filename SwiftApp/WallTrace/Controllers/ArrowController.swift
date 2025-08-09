@@ -3,6 +3,8 @@ import RealityKit
 import ARKit
 import Combine
 
+/// The controller for the AR direction arrow that will guide the user toward their target Waypoint.
+/// 
 class ArrowController: ObservableObject {
     private weak var arView: ARView?
     private var arrows: [String: ArrowEntity] = [:]

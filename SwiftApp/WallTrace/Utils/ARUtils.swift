@@ -1,9 +1,11 @@
 import ARKit
 
+/// Returns the best 16x9 video format ration depending on the device model.
+///
 func selectBest16x9VideoFormat() -> ARConfiguration.VideoFormat? {
     let formats = ARWorldTrackingConfiguration.supportedVideoFormats
 
-    // Filter formats with ~16:9 aspect ratio
+    // Filter formats with 16:9 aspect ratio
     let sixteenByNineFormats = formats.filter { format in
         let width = Float(format.imageResolution.width)
         let height = Float(format.imageResolution.height)
@@ -12,10 +14,12 @@ func selectBest16x9VideoFormat() -> ARConfiguration.VideoFormat? {
     }
 
     if sixteenByNineFormats.isEmpty {
-        print("⚠️ No native 16:9 video formats available on this device.")
+        print("No native 16:9 video formats available on ths device.")
         return nil
     }
 
+    
+    
     // Choose highest resolution among 16:9 formats
     let best = sixteenByNineFormats.max(by: {
         $0.imageResolution.width * $0.imageResolution.height <
@@ -23,7 +27,7 @@ func selectBest16x9VideoFormat() -> ARConfiguration.VideoFormat? {
     })
 
     if let best = best {
-        print("✅ Selected 16:9 video format: \(best.imageResolution.width)x\(best.imageResolution.height) @ \(best.framesPerSecond)fps")
+        print("Selected 16:9 video format: \(best.imageResolution.width)x\(best.imageResolution.height)")
     }
 
     return best

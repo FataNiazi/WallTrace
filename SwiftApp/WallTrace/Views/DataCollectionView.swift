@@ -1,15 +1,11 @@
-//
-//  DataCollectionView.swift
-//  inUofT
-//
-//  Created by Fata Niazi on 2025-08-04.
-//
-
 import SwiftUI
 import RealityKit
 import ARKit
 import CoreLocation
 
+
+/// The View for DataCollection Mode
+///
 struct DataCollectionView: View {
     let arView: ARViewContainer
     let ocrScanner: OCRScanner

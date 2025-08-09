@@ -2,6 +2,8 @@ import Foundation
 import CoreLocation
 import Combine
 
+/// The class that will provide the heading of the device. Will be used to align the initial local heading with the absolute geographical heading.
+/// 
 final class HeadingProvider: NSObject, ObservableObject, CLLocationManagerDelegate {
     private let lm = CLLocationManager()
     @Published private(set) var headingDeg: Double?

@@ -1,12 +1,17 @@
 import SwiftUI
 import Combine
 
+/// Shared Utils accross Views, used mainlyfor animating.
+
+/// Responds to Keyboad movements
 final class KeyboardResponder: ObservableObject {
+    
     @Published var keyboardHeight: CGFloat = 0
 
     private var cancellables: Set<AnyCancellable> = []
 
     init() {
+        
         NotificationCenter.default.publisher(for: UIResponder.keyboardWillChangeFrameNotification)
             .merge(with: NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification))
             .sink { notification in
