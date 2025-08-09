@@ -38,21 +38,26 @@ def run_pipeline(sentences: list[str], model="knn"):
 
     start = time.time()
     ### MODEL 1 ###
+    embedding_time = 0
     for sentence in sentences:
         # Run Abhi's room classifier on each word
-        pred = predict(sentence, room_classifier)
-        if pred[0] == 1:
+        pred, _, pred_time = predict(sentence, room_classifier)
+        embedding_time += pred_time
+        if pred == 1:
             valid_sentences.append(sentence)
     end = time.time()
     print(
-        f"Room classification took {end - start} seconds for {len(sentences)} inputs."
+        f"Model1 embedding took {embedding_time} seconds for {len(sentences)} inputs."
+    )
+    print(
+        f"Model1 classification took {end - start} seconds for {len(sentences)} inputs."
     )
 
     start = time.time()
     embeddings = get_embeddings(valid_sentences)
     end = time.time()
     print(
-        f"Embedding generation took {end - start} seconds for {len(valid_sentences)} inputs."
+        f"Model2 embedding took {end - start} seconds for {len(valid_sentences)} inputs."
     )
 
     ### MODEL 2 ###
@@ -60,19 +65,17 @@ def run_pipeline(sentences: list[str], model="knn"):
         start = time.time()
         pred = knn_multiple_strings(knn, embeddings)
         end = time.time()
-        print(f"KNN took {end - start} seconds for {len(valid_sentences)} inputs.")
     elif model == "random_forest":
         start = time.time()
         pred = random_forest_multiple_strings(random_forest, embeddings)
         end = time.time()
-        print(
-            f"Random Forest took {end - start} seconds for {len(valid_sentences)} inputs."
-        )
     else:
         raise NameError(
             "Selected model not valid. Supported models are: knn, random_forest"
         )
-
+    print(
+        f"Model2 classification ({model}) took {end - start} seconds for {len(valid_sentences)} inputs."
+    )
     print("Predicted waypoint:", int(pred))
 
 
@@ -86,4 +89,4 @@ if __name__ == "__main__":
         "ECECTRICAN",
         "8258",
     ]
-    run_pipeline(strings, model="random_forest")
+    run_pipeline(strings, model="knn")
