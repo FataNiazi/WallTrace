@@ -5,6 +5,9 @@ from transformers import BertTokenizer, BertModel
 from torch.optim import AdamW
 from sklearn.model_selection import train_test_split
 import random
+import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
 
 non_room_samples = [
     "Janitors Closet",
@@ -28,6 +31,12 @@ non_room_samples = [
     "Turn Right",
     "Go Straight",
     "Continue Down Hall",
+    "Janitors Closet", "Main Entrance", "Library", "Elevator", "Office",
+    "Hallway", "UofT", "University of Toronto", "UNIVERSITY OF TORONTO",
+    "Storage", "Reception", "Lobby", "Conference Room", "Restroom", "Cafeteria",
+    "Recycle", "BA104 ->", "Sidney Smith", "MaRS", "Termerty",
+
+    "Turn Left", "Turn Right", "Go Straight", "Continue Down Hall",
     "End of Hallway",
     "Follow Signs",
     "Next Building",
@@ -77,6 +86,11 @@ non_room_samples = [
     "Boiler Room",
     "Electrical Room",
     "Generator Room",
+    "Elevator Bank", "Lift", "Escalator", "Moving Walkway",
+
+    "2349", "4822", "234824", "12",
+
+    "Mechanical Room", "Boiler Room", "Electrical Room", "Generator Room",
     "HVAC Room",
     "Utility Room",
     "Utility Closet",
@@ -374,6 +388,9 @@ non_room_samples = [
 tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
 device = torch.device("cuda")
 
+tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+device = torch.device('cpu')
+
 
 def predict(text, model):
     import time
@@ -391,6 +408,8 @@ def predict(text, model):
         probability = output.item()
         label = 1 if probability > 0.5 else 0
         return label, probability, end - start
+
+        return label, probability
 
 
 class RoomDataset(Dataset):
@@ -470,11 +489,34 @@ def eval_epoch(loader):
             total += labels.size(0)
     return total_loss / len(loader), correct / total
 
+def plot_confusion_matrix(loader, model):
+    model.eval()
+    y_true, y_pred = [], []
+    with torch.no_grad():
+        for batch in loader:
+            input_ids = batch['input_ids'].to(device)
+            attention_mask = batch['attention_mask'].to(device)
+            labels = batch['labels'].to(device)
+            outputs = model(input_ids, attention_mask)
+            preds = (outputs > 0.5).float()
+            y_true.extend(labels.cpu().numpy())
+            y_pred.extend(preds.cpu().numpy())
+
+    cm = confusion_matrix(y_true, y_pred)
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
+    plt.xlabel('Predicted')
+    plt.ylabel('Actual')
+    plt.title('Confusion Matrix')
+    plt.show()
+
+
 
 if __name__ == "__main__":
     data = []
 
     with open("roomLabels.txt", "r") as f:
+
+    with open('roomLabels.txt', 'r') as f:
         room_labels = set(line.strip().upper() for line in f if line.strip())
 
     for room in room_labels:
@@ -491,6 +533,8 @@ if __name__ == "__main__":
     print(
         f"Train samples: {len(train)}, Val samples: {len(val)}, Test samples: {len(test)}"
     )
+    print(
+        f"Train samples: {len(train)}, Val samples: {len(val)}, Test samples: {len(test)}")
 
     train_dataset = RoomDataset(train, tokenizer)
     val_dataset = RoomDataset(val, tokenizer)
@@ -517,3 +561,8 @@ if __name__ == "__main__":
 
     torch.save(model.state_dict(), "room_classifier.pt")
     tokenizer.save_pretrained("tokenizer/")
+
+    torch.save(model.state_dict(), 'room_classifier.pt')
+    tokenizer.save_pretrained('tokenizer/')
+    plot_confusion_matrix(test_loader, model)
+
